@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Face-ID Attendance • Serverless Ready</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: Inter, system-ui, sans-serif; }
+    .bg-skywhite { background: linear-gradient(135deg, #e0f2fe, #ffffff); }
+    .glass { background: rgba(255,255,255,0.9); backdrop-filter: blur(10px); }
+    .circle-wrap { 
+      position: relative; 
+      width: 260px; 
+      height: 260px; 
+      border-radius: 50%; 
+      overflow: hidden; 
+      margin: 0 auto; 
+      border: 4px solid #38bdf8; /* sky blue border */
+      box-shadow: 0 0 12px rgba(56,189,248,0.6);
+    }
+    .circle-wrap video, .circle-wrap img { 
+      position: absolute; 
+      top: 0; left: 0; 
+      width: 100%; height: 100%; 
+      object-fit: cover; 
+    }
+    .glow-btn { transition: all .3s ease; box-shadow:0 0 8px rgba(56,189,248,0.5); }
+    .glow-btn:hover { transform: scale(1.05); box-shadow:0 0 20px rgba(56,189,248,0.9); }
+  </style>
+</head>
+<body class="bg-skywhite min-h-screen text-gray-800">
+
+  <!-- HOME PAGE -->
+  <section id="homePage" class="h-screen flex flex-col justify-center items-center text-center px-4">
+    <h1 class="text-4xl md:text-6xl font-extrabold mb-4 text-sky-700">🎓 Face-ID Attendance</h1>
+    <p class="text-lg md:text-xl text-gray-600 mb-10">Smart, Serverless Attendance with Face Recognition</p>
+    <div class="flex gap-6">
+      <button onclick="goTo('registerPage')" class="px-8 py-4 rounded-2xl bg-sky-600 text-white glow-btn text-lg font-semibold">📝 Register Student</button>
+      <button onclick="goTo('attendancePage')" class="px-8 py-4 rounded-2xl bg-blue-600 text-white glow-btn text-lg font-semibold">✅ Mark Attendance</button>
+    </div>
+  </section>
+
+  <!-- REGISTRATION PAGE -->
+  <section id="registerPage" class="hidden min-h-screen flex flex-col px-6 py-10">
+    <button onclick="goTo('homePage')" class="mb-6 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg glow-btn">⬅ Back</button>
+    <div class="glass rounded-3xl p-6 md:p-8 shadow-xl border border-gray-200">
+      <h2 class="text-3xl font-bold mb-6 text-sky-700">🆕 Student Registration</h2>
+      <form id="regForm" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <input required id="regId" type="text" placeholder="Student ID" class="rounded-xl p-3 border border-gray-300"/>
+        <input required id="regName" type="text" placeholder="Full Name" class="rounded-xl p-3 border border-gray-300"/>
+        <input required id="regClass" type="text" placeholder="Class / Program" class="rounded-xl p-3 border border-gray-300"/>
+        <input required id="regSec" type="text" placeholder="Section" class="rounded-xl p-3 border border-gray-300"/>
+        <input id="regRoll" type="text" placeholder="Roll No." class="rounded-xl p-3 border border-gray-300"/>
+        <input id="regPhone" type="tel" placeholder="Phone" class="rounded-xl p-3 border border-gray-300"/>
+        
+        <div class="sm:col-span-2 text-center">
+          <label class="block text-lg mb-2 text-gray-700">📸 Capture Face</label>
+          <div class="circle-wrap mb-3">
+            <video id="regVideo" autoplay playsinline muted></video>
+            <img id="regPhoto" class="hidden"/>
+          </div>
+          <div class="flex gap-3 justify-center">
+            <button id="regStartCam" type="button" class="px-4 py-2 bg-sky-600 text-white rounded-lg glow-btn">Start Camera</button>
+            <button id="regCapture" type="button" class="px-4 py-2 bg-green-600 text-white rounded-lg glow-btn opacity-60 pointer-events-none">Capture</button>
+            <button id="regRetake" type="button" class="px-4 py-2 bg-amber-500 text-white rounded-lg glow-btn hidden">Retake</button>
+          </div>
+        </div>
+        <div id="regStatus" class="sm:col-span-2 text-sm mt-3"></div>
+        <button id="regSubmit" class="sm:col-span-2 px-6 py-3 rounded-2xl bg-sky-600 text-white text-lg font-semibold glow-btn mt-4">Register</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ATTENDANCE PAGE -->
+  <section id="attendancePage" class="hidden min-h-screen flex flex-col px-6 py-10">
+    <button onclick="goTo('homePage')" class="mb-6 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg glow-btn">⬅ Back</button>
+    <div class="glass rounded-3xl p-6 md:p-8 shadow-xl border border-gray-200">
+      <h2 class="text-3xl font-bold mb-6 text-sky-700">✅ Mark Attendance</h2>
+      <form id="attForm" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <input required id="attId" type="text" placeholder="Student ID" class="rounded-xl p-3 border border-gray-300"/>
+        <input required id="attName" type="text" placeholder="Full Name" class="rounded-xl p-3 border border-gray-300"/>
+        
+        <div class="sm:col-span-2 text-center">
+          <label class="block text-lg mb-2 text-gray-700">📸 Capture Selfie</label>
+          <div class="circle-wrap mb-3">
+            <video id="attVideo" autoplay playsinline muted></video>
+            <img id="attPhoto" class="hidden"/>
+          </div>
+          <div class="flex gap-3 justify-center">
+            <button id="attStartCam" type="button" class="px-4 py-2 bg-sky-600 text-white rounded-lg glow-btn">Start Camera</button>
+            <button id="attCapture" type="button" class="px-4 py-2 bg-green-600 text-white rounded-lg glow-btn opacity-60 pointer-events-none">Capture</button>
+            <button id="attRetake" type="button" class="px-4 py-2 bg-amber-500 text-white rounded-lg glow-btn hidden">Retake</button>
+          </div>
+        </div>
+        <div id="attStatus" class="sm:col-span-2 text-sm mt-3"></div>
+        <button id="attSubmit" class="sm:col-span-2 px-6 py-3 rounded-2xl bg-blue-600 text-white text-lg font-semibold glow-btn mt-4">Mark Attendance</button>
+      </form>
+    </div>
+  </section>
+
+  <canvas id="hiddenCanvas" class="hidden"></canvas>
+
+  <script>
+const REGISTER_API = 'https://ay81tk6i75.execute-api.us-east-1.amazonaws.com/prod/register';
+const ATTEND_API   = 'https://ay81tk6i75.execute-api.us-east-1.amazonaws.com/prod/attendance';
+
+function goTo(page){
+  document.querySelectorAll("section").forEach(s => s.classList.add("hidden"));
+  document.getElementById(page).classList.remove("hidden");
+}
+const byId = id => document.getElementById(id);
+const waitForVideoReady = (videoEl) => new Promise(r => { if (videoEl.readyState>=2&&videoEl.videoWidth) return r(); videoEl.addEventListener('loadedmetadata',r,{once:true}); });
+const startCamera = async(videoEl,btn)=>{ let s=await navigator.mediaDevices.getUserMedia({video:{facingMode:"user"},audio:false}); videoEl.srcObject=s; await waitForVideoReady(videoEl); await videoEl.play().catch(()=>{}); if(btn) btn.classList.remove("opacity-60","pointer-events-none");};
+const stopCamera=(videoEl,btn)=>{if(videoEl.srcObject){videoEl.srcObject.getTracks().forEach(t=>t.stop());videoEl.srcObject=null;} if(btn) btn.classList.add("opacity-60","pointer-events-none");};
+const capturePhoto=(videoEl)=>{const cv=byId("hiddenCanvas");cv.width=videoEl.videoWidth;cv.height=videoEl.videoHeight;cv.getContext("2d").drawImage(videoEl,0,0,cv.width,cv.height);return cv.toDataURL("image/jpeg",0.85).split(",")[1];};
+async function parseApiResponse(res){try{return await res.json()}catch{return{}}};
+
+// Registration
+(function(){const v=byId("regVideo"),img=byId("regPhoto"),cap=byId("regCapture"),re=byId("regRetake");let c=null;
+byId("regStartCam").onclick=async()=>{await startCamera(v,cap);img.classList.add("hidden");v.classList.remove("hidden");};
+cap.onclick=()=>{c=capturePhoto(v);img.src="data:image/jpeg;base64,"+c;img.classList.remove("hidden");v.classList.add("hidden");stopCamera(v,cap);re.classList.remove("hidden");};
+re.onclick=async()=>{c=null;img.classList.add("hidden");v.classList.remove("hidden");await startCamera(v,cap);re.classList.add("hidden");};
+byId("regForm").onsubmit=async(e)=>{e.preventDefault();const p={student_id:byId("regId").value,student_name:byId("regName").value,class:byId("regClass").value,section:byId("regSec").value,roll:byId("regRoll").value,phone:byId("regPhone").value,image:c};if(!c)return alert("Capture photo");const r=await fetch(REGISTER_API,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(p)});const d=await parseApiResponse(r);byId("regStatus").innerHTML=r.ok?`<span class="text-green-600">${d.message}</span>`:`<span class="text-red-600">${d.message}</span>`;};})();
+
+// Attendance
+(function(){const v=byId("attVideo"),img=byId("attPhoto"),cap=byId("attCapture"),re=byId("attRetake");let c=null;
+byId("attStartCam").onclick=async()=>{await startCamera(v,cap);img.classList.add("hidden");v.classList.remove("hidden");};
+cap.onclick=()=>{c=capturePhoto(v);img.src="data:image/jpeg;base64,"+c;img.classList.remove("hidden");v.classList.add("hidden");stopCamera(v,cap);re.classList.remove("hidden");};
+re.onclick=async()=>{c=null;img.classList.add("hidden");v.classList.remove("hidden");await startCamera(v,cap);re.classList.add("hidden");};
+byId("attForm").onsubmit=async(e)=>{e.preventDefault();const p={student_id:byId("attId").value,student_name:byId("attName").value,image:c};if(!c)return alert("Capture photo");const r=await fetch(ATTEND_API,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(p)});const d=await parseApiResponse(r);byId("attStatus").innerHTML=r.ok?`<span class="text-green-600">${d.message}</span>`:`<span class="text-red-600">${d.message}</span>`;};})();
+  </script>
+</body>
+</html>
